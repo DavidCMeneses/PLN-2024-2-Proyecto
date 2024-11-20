@@ -1,6 +1,6 @@
-from Dataset import Dataset
+from Dataset import LoadDataset
 
 # Cargar base de datos
 print('Running...')
-data = Dataset()
+data = LoadDataset()
 print(data)
