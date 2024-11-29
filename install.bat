@@ -12,7 +12,7 @@ if errorlevel 1 (
     )
 )
 
-call python_pln\Scripts\pip install datasets nltk pandas matplotlib spacy
+call python_pln\Scripts\pip install datasets nltk pandas matplotlib spacy pillow googletrans==4.0.0-rc1
 
 echo.
 echo ========================================
