@@ -1,3 +1,4 @@
 python_pln/
 **/__pycache__/
 .DS_Store
+**/JSON/

@@ -10,15 +10,15 @@ print('Cargando dataset...')
 data_original = LoadDataset()
 
 # Porcesar dataset
-print('Procesando dataset...')
+print('Traduciendo dataset...')
 data: list[InfoImg] = []
 for i in data_original:
     total_proceso = len(data_original[i])
     filtrados = 0
     for j in range(len(data_original[i])):
-        if j > 40:
+        if j > 20:
             break
-        print(f'Limpiando {j}/{total_proceso}')
+        print(f'Traduciendo {j+1}/{total_proceso}')
         # Limpiar caption
         texto_limpio = Limpiar(data_original[i][j]['caption'])
         # Filtrar
@@ -31,13 +31,17 @@ for i in data_original:
 
 # Tokenizar
 print('Tokenizando dataset...')
-for i in data:
+total_proceso = len(data)
+for num, i in enumerate(data):
+    print(f'Tokenizando {num+1}/{total_proceso}')
     tokens = Tokenizar(i.description)
     for token in tokens:
-        print(f"{token.text} --- {token.pos_}")
-        if token.pos_ == 'NOUN' | token.pos_ == 'PROPN':
-            i.addEntity(token.text)
+        i.tokens.append(token)
     
-# Mostrar info
-for i in data:
-    print(f"\n----------\n{i.description}\n\n{i.entidades}\n----------\n")
+# Procesar imagen
+print('Procesando imágenes...')
+for num, i in enumerate(data):
+    print(f'Procesando {num+1}/{total_proceso}')
+    i.extraerEntidades()
+    i.relateEntities()
+    i.toJSON()
