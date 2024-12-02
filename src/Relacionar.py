@@ -10,9 +10,18 @@ nouns_especiales: set[str] = {
     'lado',
     'frente',
     'detrás',
-    'atrás'
+    'atrás',
+    'parte',
+    'fondo',
+    'plano',
 }
 
+patrones: list[list[str]] = [ # Ordenar según longitud de las listas!!!
+    ['ADP', 'NOUN', 'ADP'],
+    ['AUX', 'ADJ', 'ADP'],
+    ['ADP', 'DET'],
+    ['ADP']
+]
 def BuscarPatron(lista: list[Token], patron: list[str]):
     n = len(patron)
     for i in range(len(lista) - n + 1):
@@ -25,11 +34,9 @@ def Relacionar(pos_entity1: int,
                pos_entity2: int, 
                tokens: list[Token])->str | None:
     tokens_entre = tokens[pos_entity1+1:pos_entity2]
-    relacion = BuscarPatron(tokens_entre, ['ADP', 'NOUN', 'ADP'])
-    if relacion:
-        return " ".join([t.text for t in relacion])
-    relacion = BuscarPatron(tokens_entre, ['AUX', 'ADJ', 'ADP'])
-    if relacion:
-        return " ".join([t.text for t in relacion])
+    for patron in patrones:
+        relacion = BuscarPatron(tokens_entre, patron)
+        if relacion:
+            return " ".join([t.text for t in relacion])
     return None
     

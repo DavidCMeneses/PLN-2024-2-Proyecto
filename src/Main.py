@@ -16,7 +16,7 @@ for i in data_original:
     total_proceso = len(data_original[i])
     filtrados = 0
     for j in range(len(data_original[i])):
-        if j > 20:
+        if j > 350:
             break
         print(f'Traduciendo {j+1}/{total_proceso}')
         # Limpiar caption
@@ -29,19 +29,17 @@ for i in data_original:
         # Traducir caption y armar dataset
         data.append(InfoImg(j, data_original[i][j]['image'], Traducir(texto_limpio)))
 
-# Tokenizar
+# Tokenizar, procesar y crear JSON
 print('Tokenizando dataset...')
 total_proceso = len(data)
 for num, i in enumerate(data):
     print(f'Tokenizando {num+1}/{total_proceso}')
     tokens = Tokenizar(i.description)
     for token in tokens:
+        # print(f"{token.text} ----- {token.pos_}")
         i.tokens.append(token)
-    
-# Procesar imagen
-print('Procesando imágenes...')
-for num, i in enumerate(data):
     print(f'Procesando {num+1}/{total_proceso}')
     i.extraerEntidades()
     i.relateEntities()
     i.toJSON()
+    i.clear()

@@ -27,10 +27,14 @@ class InfoImg:
         self.img = img
         self.description = description
         self.entidades: list[Entity] = []
-        self.verbos_set: set[str] = set()
-        self.auxiliary: set[str] = set()
         self.relaciones: list[Relation] = []
         self.tokens: list[Token] = []
+
+    def clear(self):
+        # Limpiar memoria (correr después de generar el JSON)
+        self.entidades = []
+        self.relaciones = []
+        self.tokens = []
 
     def extraerEntidades(self):
         for pos, token in enumerate(self.tokens):
