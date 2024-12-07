@@ -28,7 +28,7 @@ for i in data_original:
         # Filtrar
         if "paint" in texto_limpio:
             filtrados += 1
-            print(f"\033[31mFiltrado -> {filtrados}\033[0m")
+            print(f"\033[31mFiltrado Paint -> {filtrados}\033[0m")
             continue
         # Traducir caption y armar dataset
         try:
@@ -38,6 +38,8 @@ for i in data_original:
             try:
                 data.append(InfoImg(j, data_original[i][j]['image'], Traducir(texto_limpio)))
             except:
+                filtrados += 1
+                print(f"\033[31mFiltrado Traducción -> {filtrados}\033[0m")
                 continue
 
 # Creación de datos de entrenamiento suponiendo que el modelo 'es_core_news_md' etiqueta bien
