@@ -7,9 +7,11 @@ from Training import ModelTrainer
 from Evaluate import ModelEvaluate
 from sklearn.model_selection import KFold
 import os
+import time
 
 # Cargar base de datos
 print('\033[32mInicio...\033[0m')
+time_ini = time.time()
 print('\033[32mCargando dataset...\033[0m')
 data_original = LoadDataset()
 
@@ -26,15 +28,17 @@ for i in data_original:
         # Filtrar
         if "paint" in texto_limpio:
             filtrados += 1
-            print(f"\033[31mFiltrado Paint-> {filtrados}\033[0m")
+            print(f"\033[31mFiltrado -> {filtrados}\033[0m")
             continue
         # Traducir caption y armar dataset
         try:
             data.append(InfoImg(j, data_original[i][j]['image'], Traducir(texto_limpio)))
         except:
-            filtrados += 1
-            print(f"\033[31mFiltrado Traducción -> {filtrados}\033[0m")
-            continue
+            time.sleep(5)
+            try:
+                data.append(InfoImg(j, data_original[i][j]['image'], Traducir(texto_limpio)))
+            except:
+                continue
 
 # Creación de datos de entrenamiento suponiendo que el modelo 'es_core_news_md' etiqueta bien
 print('\033[32mEtiquetando data...\033[0m')
@@ -93,3 +97,4 @@ for num, i in enumerate(data):
     i.relateEntities()
     i.toJSON()
     i.clear()
+print(f"Duración segundos: {time.time() - time_ini}")
