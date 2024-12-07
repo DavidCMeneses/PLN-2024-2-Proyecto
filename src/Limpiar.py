@@ -1,11 +1,10 @@
 import re
 
 def Limpiar(texto: str)->str:
-    # print("##########\n")
-    # print(texto)
-    # print("\n")
-    # print("-"*20)
-    # print("\n")
+    '''
+    Limpia las descripciones del dataset alfredplpl/artbench-pd-256x256
+    para obtener descripciones más útiles
+    '''
     texto = re.sub(r'[tT]he image shows a .*?painting of', '', texto)
     texto = re.sub(r'[pP]ainted by .*?\.', '.', texto)
     texto = re.sub(r'[tT]he painting is .*?\.', '', texto)
@@ -17,6 +16,4 @@ def Limpiar(texto: str)->str:
     texto = texto.replace(' .', '.')
     texto = texto.replace(',.', '.')
     texto = texto.strip()
-    # print(texto)
-    # print("\n##########\n")
     return texto
