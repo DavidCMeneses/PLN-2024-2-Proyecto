@@ -18,8 +18,8 @@ print('\033[32mCargando dataset...\033[0m')
 data_original = LoadDataset()
 
 # Porcesar dataset
-desde = 0
-hasta = 2000
+desde = 9000
+hasta = 11000
 total_proceso = hasta - desde
 print('\033[32mTraduciendo dataset...\033[0m')
 os.makedirs(os.path.join('src', 'ESP'), exist_ok=True)

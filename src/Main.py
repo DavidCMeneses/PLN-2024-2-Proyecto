@@ -1,8 +1,6 @@
 from Dataset import LoadDataset
-from Traducir import Traducir
 from Model import InfoImg
 from Tokenizar import Tokenizar
-from Limpiar import Limpiar
 from Training import ModelTrainer
 from Evaluate import ModelEvaluate
 from sklearn.model_selection import KFold
@@ -16,31 +14,20 @@ print('\033[32mCargando dataset...\033[0m')
 data_original = LoadDataset()
 
 # Porcesar dataset
-print('\033[32mTraduciendo dataset...\033[0m')
+print('\033[32mObteniendo traducciones...\033[0m')
 data: list[InfoImg] = []
 for i in data_original:
     total_proceso = len(data_original[i])
     filtrados = 0
     for j in range(len(data_original[i])):
-        print(f'Traduciendo {j+1}/{total_proceso}')
-        # Limpiar caption
-        texto_limpio = Limpiar(data_original[i][j]['caption'])
-        # Filtrar
-        if "paint" in texto_limpio:
-            filtrados += 1
-            print(f"\033[31mFiltrado Paint -> {filtrados}\033[0m")
-            continue
-        # Traducir caption y armar dataset
+        # Armar dataset leyendo las traducciones
+        print(f'Leyendo {j+1}/{total_proceso}')
         try:
-            data.append(InfoImg(j, data_original[i][j]['image'], Traducir(texto_limpio)))
-        except:
-            time.sleep(5)
-            try:
-                data.append(InfoImg(j, data_original[i][j]['image'], Traducir(texto_limpio)))
-            except:
-                filtrados += 1
-                print(f"\033[31mFiltrado Traducción -> {filtrados}\033[0m")
-                continue
+            with open(os.path.join('src', 'ESP', f'{j}.txt')) as traduccion:
+                data.append(InfoImg(j, data_original[i][j]['image'], traduccion.readline()))
+        except: 
+            filtrados += 1
+            print(f"\033[31mFiltrados -> {filtrados}\033[0m")
 
 # Creación de datos de entrenamiento suponiendo que el modelo 'es_core_news_md' etiqueta bien
 print('\033[32mEtiquetando data...\033[0m')
@@ -87,8 +74,6 @@ print(f'\033[33mMejor modelo: {mejor_modelo}\033[0m')
 print('\033[32mCreando JSONS...\033[0m')
 total_proceso = len(data)
 for num, i in enumerate(data):
-    if num < 50: # Empezar desde textos que no se usaron para entrenar
-        continue
     print(f'\033[33mTokenizando {num+1}/{total_proceso}\033[0m')
     tokens = Tokenizar(i.description, os.path.join('src', 'MODEL', f'modelo_pos_es_{mejor_modelo}'))
     for token in tokens:
