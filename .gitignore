@@ -4,3 +4,5 @@ python_pln/
 *.zip
 **/JSON/
 **/MODEL/
+**/RESULTS/
+GeminiKey.txt
