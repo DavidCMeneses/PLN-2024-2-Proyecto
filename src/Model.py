@@ -4,9 +4,9 @@ from Relacionar import Relacionar, nouns_especiales
 import json
 import os
 from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Image, Spacer, Paragraph
 from reportlab.lib import colors
-from reportlab.pdfgen import canvas
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Image
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 import io
 
 class Entity:
@@ -111,7 +111,7 @@ class InfoImg:
         for relation in data['relations']:
             entity1 = entities[relation["obj1"]]
             entity2 = entities[relation["obj2"]]
-            description.append(f"{entity1} {relation['type']} {entity2}.")
+            description.append(f"{entity1.capitalize()} {relation['type']} {entity2}.")
             
             # Añadir las entidades mencionadas a "mentioned_entities"
             mentioned_entities.add(entity1)
@@ -144,30 +144,54 @@ class InfoImg:
         img_io.seek(0)  # Reposicionar al inicio del archivo en memoria
 
         # Crear el objeto Image de reportlab usando el archivo en memoria
-        img = Image(img_io, width=200, height=100)  # Ajusta el tamaño de la imagen si es necesario
+        img = Image(img_io, width=300, height=200)  # Ajusta el tamaño de la imagen si es necesario
         elements.append(img)
 
-        # Crear la tabla con 3 columnas
-        data = [
-            ["Descripción Original", "Descripción Generada", "Descripción Mejorada"],
-            [self.description, self.description_generada, self.description_mejorada]
-        ]
+        # Espaciador entre la imagen y la tabla
+        elements.append(Spacer(1, 20))
 
-        # Estilos para la tabla
-        table_style = TableStyle([
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),  # Color de texto blanco para el encabezado
-            ('BACKGROUND', (0, 0), (-1, 0), colors.blue),  # Color de fondo para el encabezado
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),  # Alineación centrada
-            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),  # Fuente
-            ('FONTSIZE', (0, 0), (-1, -1), 10),  # Tamaño de fuente
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 12),  # Espaciado inferior de las celdas
-            ('GRID', (0, 0), (-1, -1), 1, colors.black),  # Añadir bordes a las celdas
-        ])
+        # Definir estilos para textos largos
+        estilos = getSampleStyleSheet()
+        estilo_celda = estilos["BodyText"]
+        estilo_encabezado = ParagraphStyle(
+            'encabezado',
+            parent=estilos['Heading4'],
+            alignment=1,  # centrado
+            textColor=colors.whitesmoke
+        )
+        
+        # Preparar la data de la tabla usando Paragraph para gestionar textos largos
+        encabezados = [
+            Paragraph("Descripción Original", estilo_encabezado),
+            Paragraph("Descripción Generada", estilo_encabezado),
+            Paragraph("Descripción Mejorada", estilo_encabezado)
+        ]
+        
+        fila_datos = [
+            Paragraph(self.description, estilo_celda),
+            Paragraph(self.description_generada, estilo_celda),
+            Paragraph(self.description_mejorada, estilo_celda)
+        ]
+        
+        data_tabla = [encabezados, fila_datos]
+        
+        # Calcular anchos de columnas (disponible en doc.width)
+        col_width = doc.width / 3.0
+        col_widths = [col_width, col_width, col_width]
+        
+        # Crear la tabla con los anchos definidos
+        tabla = Table(data_tabla, colWidths=col_widths)
+        tabla.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.beige),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ]))
 
         # Crear la tabla
-        table = Table(data)
-        table.setStyle(table_style)
-        elements.append(table)
+        elements.append(tabla)
 
         # Generar el PDF
         doc.build(elements)

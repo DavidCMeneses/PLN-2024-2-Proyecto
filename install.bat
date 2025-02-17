@@ -12,7 +12,7 @@ if errorlevel 1 (
     )
 )
 
-call python_pln\Scripts\pip install datasets nltk pandas matplotlib spacy pillow scikit-learn googletrans==4.0.0-rc1 reportlab google-generativeai
+call python_pln\Scripts\pip install datasets nltk pandas matplotlib spacy pillow scikit-learn googletrans==4.0.0-rc1 reportlab ollama
 
 echo.
 echo ========================================

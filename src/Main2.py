@@ -1,6 +1,7 @@
 from Dataset import LoadDataset
 from Model import InfoImg
-from Gemini import GeminiModel
+from LLN import LLNModel
+from Similarity import Similitud
 import os
 import time
 
@@ -26,17 +27,19 @@ for i in data_original:
             filtrados += 1
             print(f"\033[31mFiltrados -> {filtrados}\033[0m")
 
-# Referenciar JSONS
+# Generar textos con los JSONS
 print('\033[32mGenerando Textos...\033[0m')
 total_proceso = len(data)
-for j, i in enumerate(data):
-    print(f'Procesando {j+1}/{total_proceso}')
-    i.json_path = os.path.join('src', 'JSON', f"{i.id}.json")
-    if os.path.exists(i.json_path):
-        i.description_generada = i.fromJSON()
-        i.description_mejorada = GeminiModel(i.description_generada)
-        time.sleep(3)
-        i.generate_pdf()
-        break
-    else:
-        print(f"\033[31mSin JSON\033[0m")
+with open('src/RESULTS/results.txt', '+a') as file:
+    for j, i in enumerate(data):
+        print(f'Procesando {j+1}/{total_proceso}')
+        i.json_path = os.path.join('src', 'JSON', f"{i.id}.json")
+        if os.path.exists(i.json_path):
+            i.description_generada = i.fromJSON()
+            i.description_mejorada = LLNModel(i.description_generada)
+            time.sleep(5)
+            i.generate_pdf()
+            file.write(f"{Similitud(i.description, i.description_generada)}|{Similitud(i.description,i.description_mejorada)}\n")
+        else:
+            print(f"\033[31mSin JSON\033[0m")
+    file.close()

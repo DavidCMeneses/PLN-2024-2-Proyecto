@@ -17,7 +17,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Instalar las bibliotecas necesarias
-python_pln/bin/pip install datasets nltk pandas matplotlib spacy pillow scikit-learn googletrans==4.0.0-rc1 reportlab google-generativeai
+python_pln/bin/pip install datasets nltk pandas matplotlib spacy pillow scikit-learn googletrans==4.0.0-rc1 reportlab ollama
 
 # Informar al usuario que la instalación ha sido completada
 echo
